@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { ComposedStory, useEffect, useState } from "@storybook/store";
+import React, { useState, useEffect } from "react";
+import Dropzone from "./index";
 import Button from "components/atoms/Button";
 import Box from "components/layout/Box";
-import MyDropzone from ".";
 
 export default {
   title: "Molecules/MyDropzone",
@@ -15,7 +15,7 @@ export default {
       },
     },
     width: {
-      contro: { type: "number" },
+      control: { type: "number" },
       description: "横幅",
       table: {
         type: { summary: "number" },
@@ -24,13 +24,12 @@ export default {
     hasError: {
       control: { type: "boolean" },
       defaultValue: false,
-      description: "バリデーションのフラグ",
+      description: "バリデーションエラーフラグ",
       table: {
         type: { summary: "boolean" },
       },
     },
     acceptedFileTypes: {
-      //なぜここだけoptions？
       options: {
         control: { type: "array" },
         description: "受け付けるファイルタイプ",
@@ -40,21 +39,21 @@ export default {
       },
     },
     onDrop: {
-      description: "ファイルがドロップされたときのイベントハンドラ",
+      description: "ファイルがドロップ入力された時のイベントハンドラ",
       table: {
         type: { summary: "function" },
       },
     },
     onChange: {
-      description: "ファイルが入力されたときのイベントハンドラ",
+      description: "ファイルが入力された時のイベントハンドラ",
       table: {
         type: { summary: "function" },
       },
     },
   },
-} as ComponentMeta<typeof MyDropzone>;
+} as ComponentMeta<typeof Dropzone>;
 
-const Template: ComponentStory<typeof MyDropzone> = (args) => {
+const Template: ComponentStory<typeof Dropzone> = (args) => {
   const [files, setFiles] = useState<File[]>([]);
   const handleDrop = (files: File[]) => {
     setFiles(files);
@@ -65,6 +64,7 @@ const Template: ComponentStory<typeof MyDropzone> = (args) => {
     const res = await fetch("/images/sample/1.jpg");
     const blob = await res.blob();
     const file = new File([blob], "1.png", blob);
+
     setFiles([...files, file]);
   };
 
@@ -74,12 +74,13 @@ const Template: ComponentStory<typeof MyDropzone> = (args) => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
       <Box marginBottom={1}>
-        <MyDropzone {...args} value={files} onDrop={handleDrop} />
+        <Dropzone {...args} value={files} onDrop={handleDrop} />
       </Box>
       <Box marginBottom={1}>
         <Button onClick={fetchData}>画像を追加</Button>
